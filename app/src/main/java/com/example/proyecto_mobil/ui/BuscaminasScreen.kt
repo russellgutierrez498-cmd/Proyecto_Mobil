@@ -1,12 +1,6 @@
 package com.example.proyecto_mobil.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proyecto_mobil.ui.components.CasillaComposable
+import com.example.proyecto_mobil.ui.components.FinDeJuegoDialog
 import com.example.proyecto_mobil.viewmodel.BuscaminasViewModel
 
 @Composable
@@ -34,7 +29,6 @@ fun BuscaminasScreen(viewModel: BuscaminasViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // 1. TÍTULO Y PUNTUACIÓN
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Buscaminas",
@@ -90,30 +84,10 @@ fun BuscaminasScreen(viewModel: BuscaminasViewModel) {
             }
         }
 
-        AnimatedVisibility(
-            visible = uiState.isGameOver || uiState.isGameWon,
-            enter = fadeIn() + slideInVertically(initialOffsetY = { 50 }),
-            exit = fadeOut()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .background(
-                        color = if (uiState.isGameWon) Color(0xFF4CAF50) else Color(0xFFF44336),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = if (uiState.isGameWon) "¡Felicidades, ganaste! 🏆" else "¡Boom! Perdiste 💥",
-                    color = Color.White,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
+        FinDeJuegoDialog(
+            isVisible = uiState.isGameOver || uiState.isGameWon,
+            isGameWon = uiState.isGameWon
+        )
 
         Button(
             onClick = { viewModel.iniciarJuego() },
