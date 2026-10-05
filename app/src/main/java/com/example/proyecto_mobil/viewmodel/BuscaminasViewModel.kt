@@ -23,7 +23,6 @@ class BuscaminasViewModel : ViewModel() {
     }
 
     fun iniciarJuego() {
-        // 1. Crear matriz vacía
         val matriz = Array(filas) { f ->
             Array(columnas) { c ->
                 CellState(row = f, col = c)
@@ -65,7 +64,8 @@ class BuscaminasViewModel : ViewModel() {
             isGameOver = false,
             isGameWon = false,
             rows = filas,
-            cols = columnas
+            cols = columnas,
+            puntuacion = 0
         )
     }
 
@@ -92,10 +92,11 @@ class BuscaminasViewModel : ViewModel() {
 
             val gano = verificarVictoria(nuevoTablero)
 
-            _uiState.update {
-                it.copy(
+            _uiState.update { currentState ->
+                currentState.copy(
                     board = nuevoTablero,
-                    isGameWon = gano
+                    isGameWon = gano,
+                    puntuacion = currentState.puntuacion + 10
                 )
             }
         }

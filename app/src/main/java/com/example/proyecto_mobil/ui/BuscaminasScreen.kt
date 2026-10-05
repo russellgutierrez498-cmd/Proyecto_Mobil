@@ -1,7 +1,15 @@
 package com.example.proyecto_mobil.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -13,19 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proyecto_mobil.ui.components.CasillaComposable
-import com.example.proyecto_mobil.ui.components.FinDeJuegoDialog
 import com.example.proyecto_mobil.viewmodel.BuscaminasViewModel
 
 @Composable
 fun BuscaminasScreen(viewModel: BuscaminasViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-
-    if (uiState.isGameOver || uiState.isGameWon) {
-        FinDeJuegoDialog(
-            isWon = uiState.isGameWon,
-            onRestart = { viewModel.iniciarJuego() }
-        )
-    }
 
     Column(
         modifier = Modifier
@@ -34,18 +34,34 @@ fun BuscaminasScreen(viewModel: BuscaminasViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
+        // 1. TÍTULO Y PUNTUACIÓN
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Buscaminas",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
-                text = "Toca para destapar | Mantén presionado para 🚩",
+                text = "Toca para destapar | Mantén para 🚩",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 12.dp)
             )
+
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                Text(
+                    text = "Puntuación: ${uiState.puntuacion}",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1976D2),
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+                )
+            }
         }
 
         Box(
@@ -71,6 +87,31 @@ fun BuscaminasScreen(viewModel: BuscaminasViewModel) {
                         }
                     }
                 }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = uiState.isGameOver || uiState.isGameWon,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { 50 }),
+            exit = fadeOut()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .background(
+                        color = if (uiState.isGameWon) Color(0xFF4CAF50) else Color(0xFFF44336),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = if (uiState.isGameWon) "¡Felicidades, ganaste! 🏆" else "¡Boom! Perdiste 💥",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
 

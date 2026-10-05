@@ -5,5 +5,7 @@ data class BuscaminasUiState(
     val isGameOver: Boolean = false,
     val isGameWon: Boolean = false,
     val rows: Int = 8,
-    val cols: Int = 8
+    val cols: Int = 8,
+    val puntuacion: Int = 0
+
 )
